@@ -12,10 +12,16 @@ import org.springframework.web.bind.annotation.RestController
 class RestController(@Autowired private val emailService: EmailService, @Value("\${send.to}") private val sendTo: String) {
     @PostMapping("/send")
     fun send(@RequestBody request: SendRequest) {
-        val subject = if (request.isUpdate) {
-            "Note updated"
-        } else {
-            "Note created"
+        val subject = when (request.update) {
+            UpdateType.UPDATE -> {
+                "Note updated"
+            }
+            UpdateType.CREATE -> {
+                "Note created"
+            }
+            UpdateType.DELETE -> {
+                "Note deleted"
+            }
         }
         val content = StringBuilder()
         if (request.oldTitle == null || request.oldTitle == request.title) {
